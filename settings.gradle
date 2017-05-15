@@ -1,0 +1,5 @@
+include 'exporter'
+include 'importer'
+include 'core'
+
+rootProject.name = 'sign-shop-data'

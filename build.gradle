@@ -1,0 +1,23 @@
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'idea'
+
+    group = 'ru.ensemplix.shop'
+    version = '1.0-SNAPSHOT'
+
+    sourceCompatibility = '1.7'
+    targetCompatibility = '1.7'
+
+    repositories {
+        mavenCentral()
+
+        maven {
+            url 'http://maven.ensemplix.ru/artifactory/Ensemplix/'
+        }
+    }
+
+    dependencies {
+        testCompile 'org.mockito:mockito-core:2.3.0'
+        testCompile 'junit:junit:4.12'
+    }
+}
