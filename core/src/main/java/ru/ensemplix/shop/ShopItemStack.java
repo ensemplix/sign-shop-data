@@ -3,14 +3,24 @@ package ru.ensemplix.shop;
 /**
  * Представляет информацию о предмете.
  */
-public interface ShopItemStack {
+public class ShopItemStack {
 
-     /**
+    private final String id;
+    private final int data;
+
+    public ShopItemStack(String id, int data) {
+        this.id = id;
+        this.data = data;
+    }
+
+    /**
       * Возвращает идентификатор предмета.
       *
       * @return Идентификатор предмета.
       */
-     String getId();
+     public String getId() {
+          return id;
+     }
 
      /**
       * Возвращает дополнительную информация о предмете.
@@ -20,6 +30,8 @@ public interface ShopItemStack {
       *
       * @return Дополнительная информация о предмете.
       */
-     int getData();
+     public int getData() {
+         return data;
+     }
 
 }

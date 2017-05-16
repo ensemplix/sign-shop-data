@@ -3,6 +3,9 @@ package ru.ensemplix.shop;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import ru.ensemplix.shop.matcher.SimpleShopItemMatcher;
+
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
@@ -13,14 +16,6 @@ public class ShopItemRegistryTest {
     private final ShopItemRegistry shopItemRegistry = new ShopItemRegistry();
 
     @Test
-    public void testGetItemById() {
-        ShopItem shopItem = createShopItem("minecraft:brick", "КИРПИЧ");
-        shopItemRegistry.addItem(shopItem);
-
-        assertEquals(shopItem, shopItemRegistry.getItemById("minecraft:brick"));
-    }
-
-    @Test
     public void testGetItemByName() {
         ShopItem shopItem = createShopItem("minecraft:brick", "КИРПИЧ");
         shopItemRegistry.addItem(shopItem);
@@ -29,12 +24,14 @@ public class ShopItemRegistryTest {
     }
 
     @Test
-    public void testAddItemIdAlreadyRegistered() {
-        expected.expect(IllegalArgumentException.class);
-        expected.expectMessage("Item with id minecraft:brick already registered");
+    public void testGetItemsById() {
+        ShopItem shopItem = createShopItem("minecraft:brick", "КИРПИЧ");
+        shopItemRegistry.addItem(shopItem);
 
-        shopItemRegistry.addItem(createShopItem("minecraft:brick", "КИРПИЧ"));
-        shopItemRegistry.addItem(createShopItem("minecraft:brick", "БЕЛАЯ_ШЕРСТЬ"));
+        List<ShopItem> items = shopItemRegistry.getItemsById("minecraft:brick");
+
+        assertEquals(shopItem, items.get(0));
+        assertEquals(1, items.size());
     }
 
     @Test
@@ -47,7 +44,9 @@ public class ShopItemRegistryTest {
     }
 
     private ShopItem createShopItem(String id, String name) {
-        return new ShopItem(id, name, null, null);
+        ShopItemStack itemStack = new ShopItemStack(id, 0);
+
+        return new ShopItem(name, itemStack, new SimpleShopItemMatcher(itemStack));
     }
 
 }

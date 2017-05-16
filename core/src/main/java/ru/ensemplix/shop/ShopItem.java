@@ -7,29 +7,18 @@ import ru.ensemplix.shop.matcher.ShopItemMatcher;
  */
 public class ShopItem {
 
-    private final String id;
     private final String name;
     private final ShopItemStack itemStack;
     private final ShopItemMatcher matcher;
 
-    public ShopItem(String id, String name, ShopItemStack itemStack, ShopItemMatcher matcher) {
+    public ShopItem(String name, ShopItemStack itemStack, ShopItemMatcher matcher) {
         if(name.length() > 16) {
             throw new IllegalArgumentException("Item name can't be longer than 16 characters");
         }
 
-        this.id = id;
         this.name = name;
         this.itemStack = itemStack;
         this.matcher = matcher;
-    }
-
-    /**
-     * Возвращает уникальный идиентификатор товара. Например "minecraft:brick".
-     *
-     * @return Уникальный идентификатор товара.
-     */
-    public String getId() {
-        return id;
     }
 
     /**

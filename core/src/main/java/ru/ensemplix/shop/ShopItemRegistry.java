@@ -1,6 +1,8 @@
 package ru.ensemplix.shop;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -10,8 +12,8 @@ public class ShopItemRegistry {
 
     // Список товаров, где в качестве ключа выступает название товара.
     private final Map<String, ShopItem> itemsByName = new HashMap<>();
-    // Список товаров, где в качестве ключа выступает уникальный идентификатор.
-    private final Map<String, ShopItem> itemsById = new HashMap<>();
+    // Список товаров, где в качестве ключа выступает идентификатор.
+    private final Map<String, List<ShopItem>> itemsById = new HashMap<>();
 
     /**
      * Добавляет переданный товар в перечень.
@@ -19,28 +21,31 @@ public class ShopItemRegistry {
      * @param item Товар, который добавляем в перечень.
      */
     public void addItem(ShopItem item) {
-        String id = item.getId();
+        String id = item.getItemStack().getId();
         String name = item.getName();
-
-        if(itemsById.containsKey(id)) {
-            throw new IllegalArgumentException("Item with id " + id + " already registered");
-        }
 
         if(itemsByName.containsKey(name)) {
             throw new IllegalArgumentException("Item with name " + name + " already registered");
         }
 
+        List<ShopItem> items = itemsById.get(id);
+
+        if(items == null) {
+            items = new ArrayList<>();
+            itemsById.put(id, items);
+        }
+
         itemsByName.put(name, item);
-        itemsById.put(id, item);
+        items.add(item);
     }
 
     /**
-     * Возвращает товар по его уникальному идентификатору. Например "minecraft:brick".
+     * Возвращает список товаров по указанному идентификатору. Например "minecraft:brick".
      *
-     * @param id Уникальный идентификатор товара.
-     * @return Товар, который получил по переданому идентификатору.
+     * @param id Идентификатор товара.
+     * @return Список товаров, который получили по переданому идентификатору.
      */
-    public ShopItem getItemById(String id) {
+    public List<ShopItem> getItemsById(String id) {
         return itemsById.get(id);
     }
 
