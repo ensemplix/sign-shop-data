@@ -5,8 +5,10 @@ subprojects {
     group = 'ru.ensemplix.shop'
     version = '1.0-SNAPSHOT'
 
-    sourceCompatibility = '1.7'
-    targetCompatibility = '1.7'
+    [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
 
     repositories {
         mavenCentral()

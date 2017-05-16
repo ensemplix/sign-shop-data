@@ -1,9 +1,9 @@
 package ru.ensemplix.shop.export;
 
-import ru.ensemplix.shop.ShopItemData;
+import ru.ensemplix.shop.ShopItem;
 
 import java.nio.file.Path;
-import java.util.Set;
+import java.util.List;
 
 /**
  * Реализация данного интерфейса позволяет создавать разные
@@ -17,6 +17,6 @@ public interface ShopItemExporter {
      * @param items Список предметов, который экспортируем.
      * @param path Файл, в который мы экспортируем список предметов.
      */
-    void export(Set<ShopItemData> items, Path path);
+    void export(List<ShopItem> items, Path path);
 
 }
