@@ -1,0 +1,41 @@
+apply plugin: 'forge'
+
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+buildscript {
+    repositories {
+        mavenCentral()
+
+        maven {
+            url = "http://files.minecraftforge.net/maven"
+        }
+    }
+
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+    }
+}
+
+jar {
+    baseName = 'ShopDataExporter'
+}
+
+minecraft {
+    version = '1.7.10-10.13.4.1558-1.7.10'
+    mappings = 'stable_12'
+}
+
+dependencies {
+    compile 'com.google.code.gson:gson:2.8.0'
+}
+
+task setup {
+    dependsOn 'setupDecompWorkspace'
+    dependsOn 'setupDevWorkspace'
+    dependsOn 'idea'
+    tasks.findByName('setupDevWorkspace').mustRunAfter 'setupDecompWorkspace'
+    tasks.findByName('idea').mustRunAfter 'setupDevWorkspace'
+}
