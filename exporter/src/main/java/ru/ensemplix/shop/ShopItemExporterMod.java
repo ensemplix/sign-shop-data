@@ -12,8 +12,9 @@ import ru.ensemplix.shop.export.ShopItemExporter;
 import ru.ensemplix.shop.list.CreativeTabItemList;
 import ru.ensemplix.shop.list.ItemList;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,16 +29,32 @@ public class ShopItemExporterMod {
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-        folder = event.getModConfigurationDirectory().toPath();
+        folder = event.getModConfigurationDirectory().toPath().resolve("export_data");
         logger = event.getModLog();
+
+        try {
+            Files.createDirectories(folder);
+        } catch (IOException e) {
+            logger.warn("Failed create export data folder");
+        }
     }
 
     @EventHandler
     public void loadComplete(FMLLoadCompleteEvent event) {
         logger.info("Exporting items");
 
+        try {
+            exportItems();
+        } catch(Exception e) {
+            logger.warn("Failed to export items", e);
+        }
+    }
+
+    private void exportItems() {
         // Список всех предметов по модам.
         Map<String, List<ShopItem>> itemsByModId = new HashMap<>();
+        // Все имена которые были.
+        List<String> names = new ArrayList<>();
 
         // Получаем список всех игровых предметов.
         ItemList itemList = new CreativeTabItemList();
@@ -53,21 +70,30 @@ public class ShopItemExporterMod {
             }
 
             String name = ShopItemNameConverter.convert(displayName);
-            String id = Item.itemRegistry.getNameForObject(item);
-            String modId = id.split(":")[0];
+
+            // Информируем о наличие дубликатов.
+            if(names.contains(name)) {
+                logger.info("Item with name " + name + " already exists");
+            }
+
+            String id = Item.itemRegistry.getNameForObject(item.getItem());
+            String modId = id.split(":")[0].replaceAll("[^a-zA-Zа-яА-Я0-9]", "");
             int data = item.getMetadata();
 
             ShopItem shopItem = new ShopItem(name, new ShopItemStack(id, data), null);
             List<ShopItem> shopItems = itemsByModId.computeIfAbsent(modId, k -> new ArrayList<>());
             shopItems.add(shopItem);
+            names.add(name);
         }
 
         // Экспортируем предметы в файлы.
         ShopItemExporter exporter = new JsonShopItemExporter();
 
         for(String modId : itemsByModId.keySet()) {
-            exporter.export(itemsByModId.get(modId), Paths.get(modId + ".json"));
+            exporter.export(itemsByModId.get(modId), folder.resolve(modId + ".json"));
         }
+
+        logger.info("Successfully finished");
     }
 
 }
