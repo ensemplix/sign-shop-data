@@ -28,12 +28,7 @@ public class ShopItemRegistry {
             throw new IllegalArgumentException("Item with name " + name + " already registered");
         }
 
-        List<ShopItem> items = itemsById.get(id);
-
-        if(items == null) {
-            items = new ArrayList<>();
-            itemsById.put(id, items);
-        }
+        List<ShopItem> items = itemsById.computeIfAbsent(id, k -> new ArrayList<>());
 
         itemsByName.put(name, item);
         items.add(item);
