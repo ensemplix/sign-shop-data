@@ -2,7 +2,10 @@ package ru.ensemplix.shop.matcher;
 
 import ru.ensemplix.shop.ShopItemStack;
 
-import static ru.ensemplix.shop.matcher.SimpleShopItemMatcher.Capability.*;
+import java.util.Arrays;
+
+import static ru.ensemplix.shop.matcher.SimpleShopItemMatcher.Capability.IGNORE_DATA;
+import static ru.ensemplix.shop.matcher.SimpleShopItemMatcher.Capability.IGNORE_STATE;
 
 /**
  * Простой матчер, которого должно хватить в большинстве случаев.
@@ -24,6 +27,10 @@ public class SimpleShopItemMatcher implements ShopItemMatcher {
         }
 
         if(!hasCapability(IGNORE_DATA) && itemStack.getData() != other.getData()) {
+            return false;
+        }
+
+        if(!hasCapability(IGNORE_STATE) && !Arrays.equals(itemStack.getState(), other.getState())) {
             return false;
         }
 

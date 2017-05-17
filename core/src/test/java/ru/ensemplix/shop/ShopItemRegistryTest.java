@@ -44,7 +44,7 @@ public class ShopItemRegistryTest {
     }
 
     private ShopItem createShopItem(String id, String name) {
-        ShopItemStack itemStack = new ShopItemStack(id, 0);
+        ShopItemStack itemStack = new ShopItemStack(id, 0, null);
 
         return new ShopItem(name, itemStack, new SimpleShopItemMatcher(itemStack));
     }

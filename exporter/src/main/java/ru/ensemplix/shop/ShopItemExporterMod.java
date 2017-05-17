@@ -6,6 +6,7 @@ import cpw.mods.fml.common.event.FMLLoadCompleteEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompressedStreamTools;
 import org.apache.logging.log4j.Logger;
 import ru.ensemplix.shop.export.JsonShopItemExporter;
 import ru.ensemplix.shop.export.ShopItemExporter;
@@ -50,7 +51,7 @@ public class ShopItemExporterMod {
         }
     }
 
-    private void exportItems() {
+    private void exportItems() throws IOException {
         // Список всех предметов по модам.
         Map<String, List<ShopItem>> itemsByModId = new HashMap<>();
         // Все имена которые были.
@@ -78,9 +79,10 @@ public class ShopItemExporterMod {
 
             String id = Item.itemRegistry.getNameForObject(item.getItem());
             String modId = id.split(":")[0].replaceAll("[^a-zA-Zа-яА-Я0-9]", "");
+            byte[] state = CompressedStreamTools.compress(item.getTagCompound());
             int data = item.getMetadata();
 
-            ShopItem shopItem = new ShopItem(name, new ShopItemStack(id, data), null);
+            ShopItem shopItem = new ShopItem(name, new ShopItemStack(id, data, state), null);
             List<ShopItem> shopItems = itemsByModId.computeIfAbsent(modId, k -> new ArrayList<>());
             shopItems.add(shopItem);
             names.add(name);
