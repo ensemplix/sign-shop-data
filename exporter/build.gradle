@@ -17,18 +17,29 @@ buildscript {
     }
 }
 
+configurations {
+    shade
+    compile.extendsFrom shade
+}
+
+dependencies {
+    shade 'com.google.code.gson:gson:2.8.0'
+    shade project(':core')
+}
+
 jar {
     baseName = 'ShopDataExporter'
+
+    configurations.shade.each { dep ->
+        from(project.zipTree(dep)){
+            exclude 'META-INF', 'META-INF/**'
+        }
+    }
 }
 
 minecraft {
     version = '1.7.10-10.13.4.1558-1.7.10'
     mappings = 'stable_12'
-}
-
-dependencies {
-    compile 'com.google.code.gson:gson:2.8.0'
-    compile project(':core')
 }
 
 task setup {
