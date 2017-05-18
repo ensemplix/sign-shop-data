@@ -44,8 +44,6 @@ public class ShopItemNameConverter {
                 .replaceAll(" ", "_")
                 .toUpperCase();
 
-        System.out.println(name);
-
         // Убираем до новой согласной у самого длинного слова в процентном соотношении.
         while(name.length() > MAX_SIGN_LINE_TEXT_WIDTH) {
             String[] lines = name.split("_");
