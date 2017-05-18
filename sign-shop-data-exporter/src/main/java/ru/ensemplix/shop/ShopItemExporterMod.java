@@ -74,7 +74,7 @@ public class ShopItemExporterMod {
 
             // Информируем о наличие дубликатов.
             if(names.contains(name)) {
-                logger.info("Item with name " + name + " already exists");
+                logger.info("Item " + name + " (" + displayName + ") already exists");
             }
 
             String id = Item.itemRegistry.getNameForObject(item.getItem());
