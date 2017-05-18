@@ -24,11 +24,11 @@ configurations {
 
 dependencies {
     shade 'com.google.code.gson:gson:2.8.0'
-    shade project(':core')
+    shade project(':sign-shop-data-core')
 }
 
 jar {
-    baseName = 'ShopDataExporter'
+    baseName = 'SignShopDataExporter'
 
     configurations.shade.each { dep ->
         from(project.zipTree(dep)){

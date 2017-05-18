@@ -1,0 +1,20 @@
+apply plugin: 'maven-publish'
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            repositories {
+                maven {
+                    credentials {
+                        username mavenUser
+                        password mavenPassword
+                    }
+
+                    url 'http://maven.ensemplix.ru/artifactory/Ensemplix/'
+                }
+            }
+        }
+    }
+}

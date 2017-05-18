@@ -1,0 +1,25 @@
+apply plugin: 'maven-publish'
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            repositories {
+                maven {
+                    credentials {
+                        username mavenUser
+                        password mavenPassword
+                    }
+
+                    url 'http://maven.ensemplix.ru/artifactory/Ensemplix/'
+                }
+            }
+        }
+    }
+}
+
+dependencies {
+    compile 'com.google.code.gson:gson:2.8.0'
+    compile project(':sign-shop-data-core')
+}
