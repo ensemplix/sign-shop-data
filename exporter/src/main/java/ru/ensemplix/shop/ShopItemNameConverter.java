@@ -1,6 +1,18 @@
 package ru.ensemplix.shop;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+/**
+ * Вспомогательный класс для конвертации имени предмета.
+ */
 public class ShopItemNameConverter {
+
+    // Паттерн, по которому мы заменяем все символы, кроме букв, на пробелы.
+    private static final Pattern ALPHANUMERIC_PATTERN = Pattern.compile("[^a-zA-Zа-яА-Я0-9]");
+
+    // Паттерн, по которому мы определяем наличие согласных.
+    private static final Pattern CONSONANT_PATTERN = Pattern.compile("[^aeiouyаеёиоуыэюя]");
 
     // Максимальное количество символов на одной строке таблички.
     private static final int MAX_SIGN_LINE_TEXT_WIDTH = 16;
@@ -16,39 +28,57 @@ public class ShopItemNameConverter {
      *
      * Примеры:
      *  - "Белая шерсть" => "БЕЛАЯ_ШЕРСТЬ"
-     *  - "Термальная центрифуга" => "ТЕРМАЛЬ_ЦЕНТРИФУ"
-     *  - "Изолированный высоковольтный провод" => "ИЗОЛ_ВЫСОК_ПРОВО"
+     *  - "Термальная центрифуга" => "ТЕРМАЛЬН_ЦЕНТРИФ"
+     *  - "Изолированный высоковольтный провод" => "ИЗОЛ_ВЫСОК_ПРОВ"
      *
      * @param name Имя предмета, которое мы конвертируем.
      * @return Преобразованное имя предмета.
      */
     public static String convert(String name) {
-        name = name
-                .replaceAll("[^a-zA-Zа-яА-Я0-9]", " ")
+        name = ALPHANUMERIC_PATTERN.matcher(name)
+                .replaceAll(" ")
                 .replaceAll("\\s+"," ")
                 .replaceAll(" ", "_")
                 .toUpperCase();
 
-        // Убирает по букве у самого длинного слова в процентном соотношении.
+        // Убираем до новой согласной у самого длинного слова в процентном соотношении.
         while(name.length() > MAX_SIGN_LINE_TEXT_WIDTH) {
             String[] lines = name.split("_");
             String maxLine = lines[0];
-            float maxPercent = 0;
+            float maxTotal = 0;
+            int maxFirst = 0;
 
             for(String line : lines) {
+                // Определяем ценность одной буквы в процентах.
                 float percent = line.length() / 100F;
+                // Сколько букв с конца до первой согласной.
+                int first = firstConsonant(line);
+                // Сколько в итоге мы должныы удалить в процентах.
+                float total = percent * first;
 
-                if(percent > maxPercent) {
+                // Если ценность этой буквы в процентах ниже, чем у других слов, то выбираем ее на удаление.
+                if(total > maxTotal) {
                     maxLine = line;
-                    maxPercent = percent;
+                    maxTotal = total;
+                    maxFirst = first;
                 }
             }
 
-            name = name.replaceAll(maxLine, maxLine.substring(0, maxLine.length() - 1));
+            name = name.replaceAll(maxLine, maxLine.substring(0, maxLine.length() - maxFirst));
         }
 
-
         return name;
+    }
+
+    // Убираем последнию букву, переварачиваем строку и ищем первое совпадение.
+    private static int firstConsonant(String line) {
+        line = line.substring(0, line.length() - 1).toLowerCase();
+        StringBuilder reverse = new StringBuilder(line).reverse();
+        Matcher matcher = CONSONANT_PATTERN.matcher(reverse);
+        // Предполагается, что согласная всегда есть в слове.
+        matcher.find();
+
+        return matcher.start() + 1;
     }
 
 }

@@ -24,12 +24,12 @@ public class ShopItemNameConverterTest {
 
     @Test
     public void testConvertCentrifuge() {
-        assertEquals("ТЕРМАЛЬ_ЦЕНТРИФУ", convert("Термальная центрифуга"));
+        assertEquals("ТЕРМАЛЬН_ЦЕНТРИФ", convert("Термальная центрифуга"));
     }
 
     @Test
     public void testConvertWire() {
-        assertEquals("ИЗОЛ_ВЫСОК_ПРОВО", convert("Изолированный высоковольтный провод"));
+        assertEquals("ИЗОЛ_ВЫСОК_ПРОВ", convert("Изолированный высоковольтный провод"));
     }
 
 }
