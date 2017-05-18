@@ -22,10 +22,10 @@ public class JsonShopItemImporterTest {
 
         assertEquals(5, items.size());
         assertItem(items.get(0), "КАМЕНЬ", "minecraft:stone");
-        assertItem(items.get(1),"БЛОК_ТРАВЫ", "minecraft:grass");
-        assertItem(items.get(2),"ЗЕМЛЯ", "minecraft:dirt");
-        assertItem(items.get(3),"ПОДЗОЛ", "minecraft:dirt", 2);
-        assertItem(items.get(4),"БУЛЫЖНИК", "minecraft:cobblestone");
+        assertItem(items.get(1), "БЛОК_ТРАВЫ", "minecraft:grass");
+        assertItem(items.get(2), "ЗЕМЛЯ", "minecraft:dirt");
+        assertItem(items.get(3), "ПОДЗОЛ", "minecraft:dirt", 2);
+        assertItem(items.get(4), "БУЛЫЖНИК", "minecraft:cobblestone");
     }
 
     private void assertItem(ShopItem item, String name, String id) {
