@@ -70,6 +70,12 @@ public class ShopItemExporterMod {
                 continue;
             }
 
+            // Если в название предмета больше 5 пробелов, то пропускаем его.
+            if(displayName.split(" ").length >= 5) {
+                logger.info("Item " + displayName + " has too many spaces");
+                continue;
+            }
+
             String name = ShopItemNameConverter.convert(displayName);
 
             // Информируем о наличие дубликатов.
