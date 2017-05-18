@@ -39,9 +39,12 @@ public class ShopItemNameConverter {
     public static String convert(String name) {
         name = ALPHANUMERIC_PATTERN.matcher(name)
                 .replaceAll(" ")
+                .trim()
                 .replaceAll("\\s+"," ")
                 .replaceAll(" ", "_")
                 .toUpperCase();
+
+        System.out.println(name);
 
         // Убираем до новой согласной у самого длинного слова в процентном соотношении.
         while(name.length() > MAX_SIGN_LINE_TEXT_WIDTH) {
