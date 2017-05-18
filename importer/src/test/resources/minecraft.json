@@ -1,0 +1,37 @@
+[
+  {
+    "name": "КАМЕНЬ",
+    "itemStack": {
+      "id": "minecraft:stone",
+      "data": 0
+    }
+  },
+  {
+    "name": "БЛОК_ТРАВЫ",
+    "itemStack": {
+      "id": "minecraft:grass",
+      "data": 0
+    }
+  },
+  {
+    "name": "ЗЕМЛЯ",
+    "itemStack": {
+      "id": "minecraft:dirt",
+      "data": 0
+    }
+  },
+  {
+    "name": "ПОДЗОЛ",
+    "itemStack": {
+      "id": "minecraft:dirt",
+      "data": 2
+    }
+  },
+  {
+    "name": "БУЛЫЖНИК",
+    "itemStack": {
+      "id": "minecraft:cobblestone",
+      "data": 0
+    }
+  }
+]

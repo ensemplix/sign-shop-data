@@ -8,8 +8,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import org.apache.logging.log4j.Logger;
-import ru.ensemplix.shop.export.JsonShopItemExporter;
-import ru.ensemplix.shop.export.ShopItemExporter;
+import ru.ensemplix.shop.exporter.JsonShopItemExporter;
+import ru.ensemplix.shop.exporter.ShopItemExporter;
 import ru.ensemplix.shop.list.CreativeTabItemList;
 import ru.ensemplix.shop.list.ItemList;
 
@@ -92,7 +92,7 @@ public class ShopItemExporterMod {
         ShopItemExporter exporter = new JsonShopItemExporter();
 
         for(String modId : itemsByModId.keySet()) {
-            exporter.export(itemsByModId.get(modId), folder.resolve(modId + ".json"));
+            exporter.exportToFile(itemsByModId.get(modId), folder.resolve(modId + ".json"));
         }
 
         logger.info("Successfully finished");

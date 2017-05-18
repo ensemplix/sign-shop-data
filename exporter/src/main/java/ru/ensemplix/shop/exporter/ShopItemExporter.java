@@ -1,4 +1,4 @@
-package ru.ensemplix.shop.export;
+package ru.ensemplix.shop.exporter;
 
 import ru.ensemplix.shop.ShopItem;
 
@@ -17,6 +17,6 @@ public interface ShopItemExporter {
      * @param items Список предметов, который экспортируем.
      * @param path Файл, в который мы экспортируем список предметов.
      */
-    void export(List<ShopItem> items, Path path);
+    void exportToFile(List<ShopItem> items, Path path);
 
 }

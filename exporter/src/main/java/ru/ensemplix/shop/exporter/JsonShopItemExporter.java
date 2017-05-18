@@ -1,4 +1,4 @@
-package ru.ensemplix.shop.export;
+package ru.ensemplix.shop.exporter;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -17,7 +17,7 @@ public class JsonShopItemExporter implements ShopItemExporter {
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     @Override
-    public void export(List<ShopItem> items, Path path) {
+    public void exportToFile(List<ShopItem> items, Path path) {
         try {
             Files.write(path, gson.toJson(items).getBytes());
         } catch (IOException e) {
