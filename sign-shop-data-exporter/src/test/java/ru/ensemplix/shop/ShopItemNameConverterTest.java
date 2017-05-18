@@ -32,4 +32,14 @@ public class ShopItemNameConverterTest {
         assertEquals("ИЗОЛ_ВЫСОК_ПРОВ", convert("Изолированный высоковольтный провод"));
     }
 
+    @Test
+    public void testConvertTropicalTree() {
+        assertEquals("ДОСКИ_ИЗ_ТР_ДЕР", convert("Доски из тропического дерева"));
+    }
+
+    @Test
+    public void testConvertYellowFiredClay() {
+        assertEquals("ЖЁЛТ_ОБОЖЖ_ГЛИНА", convert("Жёлтая обожжённая глина"));
+    }
+
 }

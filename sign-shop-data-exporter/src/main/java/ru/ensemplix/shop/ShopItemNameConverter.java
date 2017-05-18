@@ -8,8 +8,8 @@ import java.util.regex.Pattern;
  */
 public class ShopItemNameConverter {
 
-    // Паттерн, по которому мы заменяем все символы, кроме букв, на пробелы.
-    private static final Pattern ALPHANUMERIC_PATTERN = Pattern.compile("[^a-zA-Zа-яА-Я0-9]");
+    // Паттерн, по которому мы определяем буквы и цифры.
+    private static final Pattern ALPHANUMERIC_PATTERN = Pattern.compile("[^a-zA-Zа-яА-ЯёЁ0-9]");
 
     // Паттерн, по которому мы определяем наличие согласных.
     private static final Pattern CONSONANT_PATTERN = Pattern.compile("[^aeiouyаеёиоуыэюя]");
@@ -30,6 +30,8 @@ public class ShopItemNameConverter {
      *  - "Белая шерсть" => "БЕЛАЯ_ШЕРСТЬ"
      *  - "Термальная центрифуга" => "ТЕРМАЛЬН_ЦЕНТРИФ"
      *  - "Изолированный высоковольтный провод" => "ИЗОЛ_ВЫСОК_ПРОВ"
+     *  - "Доски из тропического дерева" => "ДОСКИ_ИЗ_ТР_ДЕР"
+     *  - "Жёлтая обожжённая глина" => "ЖЁЛТ_ОБОЖЖ_ГЛИНА"
      *
      * @param name Имя предмета, которое мы конвертируем.
      * @return Преобразованное имя предмета.
@@ -75,10 +77,12 @@ public class ShopItemNameConverter {
         line = line.substring(0, line.length() - 1).toLowerCase();
         StringBuilder reverse = new StringBuilder(line).reverse();
         Matcher matcher = CONSONANT_PATTERN.matcher(reverse);
-        // Предполагается, что согласная всегда есть в слове.
-        matcher.find();
 
-        return matcher.start() + 1;
+        if(matcher.find()) {
+            return matcher.start() + 1;
+        }
+
+        return 1;
     }
 
 }
