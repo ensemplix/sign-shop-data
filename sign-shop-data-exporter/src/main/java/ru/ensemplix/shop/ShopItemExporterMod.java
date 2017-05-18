@@ -79,8 +79,12 @@ public class ShopItemExporterMod {
 
             String id = Item.itemRegistry.getNameForObject(item.getItem());
             String modId = id.split(":")[0].replaceAll("[^a-zA-Zа-яА-Я0-9]", "");
-            byte[] state = CompressedStreamTools.compress(item.getTagCompound());
             int data = item.getMetadata();
+            byte[] state = null;
+
+            if(item.hasTagCompound()) {
+                state = CompressedStreamTools.compress(item.getTagCompound());
+            }
 
             ShopItem shopItem = new ShopItem(name, new ShopItemStack(id, data, state), null);
             List<ShopItem> shopItems = itemsByModId.computeIfAbsent(modId, k -> new ArrayList<>());
@@ -95,7 +99,7 @@ public class ShopItemExporterMod {
             exporter.exportToFile(itemsByModId.get(modId), folder.resolve(modId + ".json"));
         }
 
-        logger.info("Successfully finished");
+        logger.info("Successfully finished with " + names.size() + " items");
     }
 
 }
