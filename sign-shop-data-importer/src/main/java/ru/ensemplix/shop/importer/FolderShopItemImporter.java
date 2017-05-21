@@ -15,7 +15,7 @@ public class FolderShopItemImporter implements ShopItemImporter {
 
     private final ShopItemImporter importer;
 
-    private FolderShopItemImporter(ShopItemImporter importer) {
+    public FolderShopItemImporter(ShopItemImporter importer) {
         this.importer = importer;
     }
 
