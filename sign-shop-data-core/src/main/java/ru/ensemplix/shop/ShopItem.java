@@ -9,16 +9,15 @@ public class ShopItem {
 
     private final String name;
     private final ShopItemStack itemStack;
-    private final ShopItemMatcher matcher;
+    private ShopItemMatcher matcher;
 
-    public ShopItem(String name, ShopItemStack itemStack, ShopItemMatcher matcher) {
+    public ShopItem(String name, ShopItemStack itemStack) {
         if(name.length() > 16) {
             throw new IllegalArgumentException("Item name can't be longer than 16 characters");
         }
 
         this.name = name;
         this.itemStack = itemStack;
-        this.matcher = matcher;
     }
 
     /**
@@ -48,6 +47,15 @@ public class ShopItem {
      */
     public ShopItemMatcher getMatcher() {
         return matcher;
+    }
+
+    /**
+     * Устанавливает матчер для данного товара.
+     *
+     * @param matcher Матчер, который мы устанавливаем.
+     */
+    public void setMatcher(ShopItemMatcher matcher) {
+        this.matcher = matcher;
     }
 
 }

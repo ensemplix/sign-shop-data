@@ -3,7 +3,6 @@ package ru.ensemplix.shop;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import ru.ensemplix.shop.matcher.SimpleShopItemMatcher;
 
 import java.util.List;
 
@@ -44,9 +43,7 @@ public class ShopItemRegistryTest {
     }
 
     private ShopItem createShopItem(String id, String name) {
-        ShopItemStack itemStack = new ShopItemStack(id, 0, null);
-
-        return new ShopItem(name, itemStack, new SimpleShopItemMatcher(itemStack));
+        return new ShopItem(name, new ShopItemStack(id, 0, null));
     }
 
 }

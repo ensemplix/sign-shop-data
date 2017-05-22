@@ -1,5 +1,7 @@
 package ru.ensemplix.shop;
 
+import ru.ensemplix.shop.matcher.SimpleShopItemMatcher;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,11 +23,16 @@ public class ShopItemRegistry {
      * @param item Товар, который добавляем в перечень.
      */
     public void addItem(ShopItem item) {
-        String id = item.getItemStack().getId();
+        ShopItemStack stack = item.getItemStack();
+        String id = stack.getId();
         String name = item.getName();
 
         if(itemsByName.containsKey(name)) {
             throw new IllegalArgumentException("Item with name " + name + " already registered");
+        }
+
+        if(item.getMatcher() == null) {
+            item.setMatcher(new SimpleShopItemMatcher(stack));
         }
 
         List<ShopItem> items = itemsById.computeIfAbsent(id, k -> new ArrayList<>());

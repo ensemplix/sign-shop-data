@@ -14,7 +14,7 @@ public class ShopItemTest {
         expected.expect(IllegalArgumentException.class);
         expected.expectMessage("Item name can't be longer than 16 characters");
 
-        new ShopItem("ABCDE_1234567_ABCDE", null, null);
+        new ShopItem("ABCDE_1234567_ABCDE", null);
     }
 
 }

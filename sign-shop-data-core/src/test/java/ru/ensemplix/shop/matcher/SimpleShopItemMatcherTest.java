@@ -50,7 +50,7 @@ public class SimpleShopItemMatcherTest {
     }
 
     private ShopItemStack createItemStack(String id, int data, byte[] state) {
-        return new ShopItemStack(id, data, null);
+        return new ShopItemStack(id, data, state);
     }
 
 }
