@@ -3,7 +3,7 @@ package ru.ensemplix.shop;
 /**
  * Представляет информацию о предмете.
  */
-public class ShopItemStack {
+public class ShopItemStack implements Cloneable {
 
     private final String id;
     private final int data;
@@ -43,6 +43,15 @@ public class ShopItemStack {
      */
     public byte[] getState() {
         return state;
+    }
+
+    @Override
+    public ShopItemStack clone() {
+        try {
+            return (ShopItemStack) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }
