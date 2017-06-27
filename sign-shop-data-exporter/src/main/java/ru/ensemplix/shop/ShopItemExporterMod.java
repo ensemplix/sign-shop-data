@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 
-@Mod(modid = "signshopdataexporter", name = "ShopDataExporter", version = "1.0", acceptedMinecraftVersions = "[1.7.10]", acceptableRemoteVersions = "*")
+@Mod(modid = "signshopdataexporter", name = "ShopDataExporter", version = "1.0", acceptedMinecraftVersions = "[1.9]", acceptableRemoteVersions = "*")
 public class ShopItemExporterMod {
 
     private Logger logger;

@@ -3,6 +3,6 @@
   "name": "ShopDataExporter",
   "description": "Exports items for ingame sign shop",
   "version": "1.0",
-  "mcversion": "1.7.10",
+  "mcversion": "1.9",
   "authors": [ "Ensemplix" ]
 }]
