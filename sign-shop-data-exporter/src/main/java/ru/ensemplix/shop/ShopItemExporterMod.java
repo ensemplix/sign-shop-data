@@ -92,7 +92,7 @@ public class ShopItemExporterMod {
                 state = CompressedStreamTools.compress(item.getTagCompound());
             }
 
-            ShopItem shopItem = new ShopItem(name, new ShopItemStack(id, data, state), null);
+            ShopItem shopItem = new ShopItem(name, new ShopItemStack(id, data, state));
             List<ShopItem> shopItems = itemsByModId.computeIfAbsent(modId, k -> new ArrayList<>());
             shopItems.add(shopItem);
             names.add(name);
