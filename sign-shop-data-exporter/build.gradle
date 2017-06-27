@@ -1,4 +1,18 @@
-apply plugin: 'forge'
+buildscript {
+    repositories {
+        mavenCentral()
+
+        maven {
+            url = "http://files.minecraftforge.net/maven"
+        }
+    }
+
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
+    }
+}
+
+apply plugin: 'net.minecraftforge.gradle.forge'
 
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
@@ -38,8 +52,9 @@ jar {
 }
 
 minecraft {
-    version = '1.7.10-10.13.4.1558-1.7.10'
-    mappings = 'stable_12'
+    version = '1.9-12.16.1.1907'
+    mappings = 'stable_24'
+    runDir = 'run'
 }
 
 task setup {

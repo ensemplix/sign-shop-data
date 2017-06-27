@@ -15,8 +15,8 @@ public class CreativeTabItemList implements ItemList {
     public List<ItemStack> getItems() {
         List<ItemStack> items = new ArrayList<>();
 
-        for(CreativeTabs creativeTab : CreativeTabs.creativeTabArray) {
-            creativeTab.displayAllReleventItems(items);
+        for(CreativeTabs creativeTab : CreativeTabs.CREATIVE_TAB_ARRAY) {
+            creativeTab.displayAllRelevantItems(items);
         }
 
         return items;

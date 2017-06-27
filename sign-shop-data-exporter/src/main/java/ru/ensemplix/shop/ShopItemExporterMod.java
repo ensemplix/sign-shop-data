@@ -1,18 +1,19 @@
 package ru.ensemplix.shop;
 
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.event.FMLLoadCompleteEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.EventHandler;
+import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import org.apache.logging.log4j.Logger;
 import ru.ensemplix.shop.exporter.JsonShopItemExporter;
 import ru.ensemplix.shop.exporter.ShopItemExporter;
 import ru.ensemplix.shop.list.CreativeTabItemList;
 import ru.ensemplix.shop.list.ItemList;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -83,16 +84,19 @@ public class ShopItemExporterMod {
                 logger.info("Item " + name + " (" + displayName + ") already exists");
             }
 
-            String id = Item.itemRegistry.getNameForObject(item.getItem());
+            String id = Item.REGISTRY.getNameForObject(item.getItem()).toString();
             String modId = id.split(":")[0].replaceAll("[^a-zA-Zа-яА-Я0-9]", "");
             int data = item.getMetadata();
             byte[] state = null;
 
             if(item.hasTagCompound()) {
-                state = CompressedStreamTools.compress(item.getTagCompound());
+                try(ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+                    CompressedStreamTools.writeCompressed(item.getTagCompound(), out);
+                    state = out.toByteArray();
+                }
             }
 
-            ShopItem shopItem = new ShopItem(name, new ShopItemStack(id, data, state), null);
+            ShopItem shopItem = new ShopItem(name, new ShopItemStack(id, data, state));
             List<ShopItem> shopItems = itemsByModId.computeIfAbsent(modId, k -> new ArrayList<>());
             shopItems.add(shopItem);
             names.add(name);
