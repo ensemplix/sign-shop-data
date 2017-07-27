@@ -2,7 +2,7 @@
   "modid": "sign-shop-data-exporter",
   "name": "ShopDataExporter",
   "description": "Exports items for ingame sign shop",
-  "version": "1.0",
-  "mcversion": "1.9",
+  "version": "1.1",
+  "mcversion": "1.12",
   "authors": [ "Ensemplix" ]
 }]

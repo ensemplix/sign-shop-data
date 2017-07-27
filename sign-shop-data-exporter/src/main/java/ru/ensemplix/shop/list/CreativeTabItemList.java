@@ -2,8 +2,8 @@ package ru.ensemplix.shop.list;
 
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -13,7 +13,7 @@ public class CreativeTabItemList implements ItemList {
 
     @Override
     public List<ItemStack> getItems() {
-        List<ItemStack> items = new ArrayList<>();
+        NonNullList<ItemStack> items = NonNullList.create();
 
         for(CreativeTabs creativeTab : CreativeTabs.CREATIVE_TAB_ARRAY) {
             creativeTab.displayAllRelevantItems(items);
