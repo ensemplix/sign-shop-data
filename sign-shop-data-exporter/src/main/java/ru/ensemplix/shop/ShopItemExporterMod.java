@@ -3,17 +3,18 @@ package ru.ensemplix.shop;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import org.apache.logging.log4j.Logger;
 import ru.ensemplix.shop.exporter.JsonShopItemExporter;
 import ru.ensemplix.shop.exporter.ShopItemExporter;
 import ru.ensemplix.shop.list.CreativeTabItemList;
 import ru.ensemplix.shop.list.ItemList;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -25,18 +26,18 @@ import java.util.Map;
 @Mod(modid = "signshopdataexporter", name = "ShopDataExporter", version = "1.1", acceptedMinecraftVersions = "[1.12]", acceptableRemoteVersions = "*")
 public class ShopItemExporterMod {
 
-    private Logger logger;
+    private ShopItemExporterLogger logger;
     private Path folder;
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         folder = event.getModConfigurationDirectory().toPath().resolve("export_data");
-        logger = event.getModLog();
+        logger = new ShopItemExporterLogger(event.getModLog());
 
         try {
             Files.createDirectories(folder);
-        } catch (IOException e) {
-            logger.warn("Failed create export data folder");
+        } catch(IOException e) {
+            logger.warn("Failed create export data folder", e);
         }
     }
 
@@ -46,9 +47,12 @@ public class ShopItemExporterMod {
 
         try {
             exportItems();
-        } catch(Exception e) {
-            logger.warn("Failed to export items", e);
+        } catch(Throwable t) {
+            logger.warn("Failed to export items", t);
         }
+
+        // Сохраняем лог экспорта в файл.
+        logger.saveToFile(new File(folder.toFile(), "export-log.txt"));
     }
 
     private void exportItems() throws IOException {
@@ -60,6 +64,8 @@ public class ShopItemExporterMod {
         // Получаем список всех игровых предметов.
         ItemList itemList = new CreativeTabItemList();
         List<ItemStack> items = itemList.getItems();
+
+        logger.info("Found " + items.size() + " items");
 
         for(ItemStack item : items) {
             String displayName = item.getDisplayName();
@@ -88,9 +94,11 @@ public class ShopItemExporterMod {
             int data = item.getMetadata();
             byte[] state = null;
 
-            if(item.hasTagCompound()) {
+            NBTTagCompound tagCompound = item.getTagCompound();
+
+            if(tagCompound != null) {
                 try(ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-                    CompressedStreamTools.writeCompressed(item.getTagCompound(), out);
+                    CompressedStreamTools.writeCompressed(tagCompound, out);
                     state = out.toByteArray();
                 }
             }
