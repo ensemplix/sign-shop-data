@@ -140,11 +140,4 @@ public class ShopItemExporterMod {
         logger.info("Successfully finished with " + names.size() + " items");
     }
 
-    private static class ShopItemDuplicatePredicate implements Predicate<ItemStack> {
-        @Override
-        public boolean test(ItemStack itemStack) {
-            return false;
-        }
-    }
-
 }
