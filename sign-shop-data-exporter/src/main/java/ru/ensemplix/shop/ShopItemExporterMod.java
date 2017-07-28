@@ -22,9 +22,28 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Mod(modid = "signshopdataexporter", name = "ShopDataExporter", version = "1.1", acceptedMinecraftVersions = "[1.12]", acceptableRemoteVersions = "*")
 public class ShopItemExporterMod {
+    // Фильтр, по которому мы убираем предметов с одинаковыми именами и свойствами.
+    private static final Predicate<ItemStack> FILTER_SAME_ITEMSTACKS = new Predicate<ItemStack>() {
+        private Map<String, ItemStack> seen = new HashMap<>();
+
+        @Override
+        public boolean test(ItemStack stack) {
+            String key = stack.toString();
+            ItemStack seenStack = seen.get(key);
+
+            if(seenStack != null && stack.isItemEqual(stack)) {
+                return true;
+            }
+
+            seen.put(key, stack);
+            return false;
+        }
+    };
 
     private ShopItemExporterLogger logger;
     private Path folder;
@@ -63,7 +82,9 @@ public class ShopItemExporterMod {
 
         // Получаем список всех игровых предметов.
         ItemList itemList = new CreativeTabItemList();
-        List<ItemStack> items = itemList.getItems();
+        List<ItemStack> items = itemList.getItems().stream()
+                .filter(FILTER_SAME_ITEMSTACKS)
+                .collect(Collectors.toList());
 
         logger.info("Found " + items.size() + " items");
 
@@ -117,6 +138,13 @@ public class ShopItemExporterMod {
         }
 
         logger.info("Successfully finished with " + names.size() + " items");
+    }
+
+    private static class ShopItemDuplicatePredicate implements Predicate<ItemStack> {
+        @Override
+        public boolean test(ItemStack itemStack) {
+            return false;
+        }
     }
 
 }
