@@ -16,6 +16,10 @@ public class CreativeTabItemList implements ItemList {
         NonNullList<ItemStack> items = NonNullList.create();
 
         for(CreativeTabs creativeTab : CreativeTabs.CREATIVE_TAB_ARRAY) {
+            if(creativeTab == CreativeTabs.HOTBAR) {
+                continue;
+            }
+
             creativeTab.displayAllRelevantItems(items);
         }
 
