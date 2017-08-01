@@ -33,10 +33,13 @@ public class ShopItemExporterMod {
 
         @Override
         public boolean test(ItemStack stack) {
-            String key = stack.toString();
+            NBTTagCompound tagCompound = stack.getTagCompound();
+            int tagSize = tagCompound != null ? tagCompound.getSize() : 0;
+            String key = stack.toString() + "-" + tagSize;
             ItemStack seenStack = seen.get(key);
 
-            if(seenStack != null && ItemStack.areItemStacksEqual(stack, seenStack)) {
+            if(seenStack != null && stack.isItemEqual(stack)) {
+                System.out.println(key);
                 return true;
             }
 
