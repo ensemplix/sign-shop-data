@@ -39,7 +39,6 @@ public class ShopItemExporterMod {
             ItemStack seenStack = seen.get(key);
 
             if(seenStack != null && stack.isItemEqual(stack)) {
-                System.out.println(key);
                 return true;
             }
 
