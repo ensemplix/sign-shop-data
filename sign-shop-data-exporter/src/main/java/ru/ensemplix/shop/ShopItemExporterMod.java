@@ -28,22 +28,19 @@ import java.util.stream.Collectors;
 @Mod(modid = "signshopdataexporter", name = "ShopDataExporter", version = "1.1", acceptedMinecraftVersions = "[1.12]", acceptableRemoteVersions = "*")
 public class ShopItemExporterMod {
     // Фильтр, по которому мы убираем предметов с одинаковыми именами и свойствами.
-    private static final Predicate<ItemStack> FILTER_SAME_ITEMSTACKS = new Predicate<ItemStack>() {
-        private Map<String, ItemStack> seen = new HashMap<>();
+    static final Predicate<ItemStack> FILTER_SAME_ITEMSTACKS = new Predicate<ItemStack>() {
+        private final List<ItemStack> seen = new ArrayList<>();
 
         @Override
         public boolean test(ItemStack stack) {
-            NBTTagCompound tagCompound = stack.getTagCompound();
-            int tagSize = tagCompound != null ? tagCompound.getSize() : 0;
-            String key = stack.toString() + "-" + tagSize;
-            ItemStack seenStack = seen.get(key);
-
-            if(seenStack != null && stack.isItemEqual(stack)) {
-                return true;
+            for(ItemStack other : seen) {
+                if(ItemStack.areItemStacksEqual(stack, other)) {
+                    return false;
+                }
             }
 
-            seen.put(key, stack);
-            return false;
+            seen.add(stack);
+            return true;
         }
     };
 
@@ -115,16 +112,7 @@ public class ShopItemExporterMod {
             String id = Item.REGISTRY.getNameForObject(item.getItem()).toString();
             String modId = id.split(":")[0].replaceAll("[^a-zA-Zа-яА-Я0-9]", "");
             int data = item.getMetadata();
-            byte[] state = null;
-
-            NBTTagCompound tagCompound = item.getTagCompound();
-
-            if(tagCompound != null) {
-                try(ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-                    CompressedStreamTools.writeCompressed(tagCompound, out);
-                    state = out.toByteArray();
-                }
-            }
+            byte[] state = tagToByteArray(item);
 
             ShopItem shopItem = new ShopItem(name, new ShopItemStack(id, data, state));
             List<ShopItem> shopItems = itemsByModId.computeIfAbsent(modId, k -> new ArrayList<>());
@@ -140,6 +128,23 @@ public class ShopItemExporterMod {
         }
 
         logger.info("Successfully finished with " + names.size() + " items");
+    }
+
+    private static byte[] tagToByteArray(ItemStack stack) {
+        if(stack != null) {
+            NBTTagCompound tagCompound = stack.getTagCompound();
+
+            if(tagCompound != null) {
+                try(ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+                    CompressedStreamTools.writeCompressed(tagCompound, out);
+                    return out.toByteArray();
+                } catch(IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
+        return new byte[0];
     }
 
 }
