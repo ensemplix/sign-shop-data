@@ -131,20 +131,18 @@ public class ShopItemExporterMod {
     }
 
     private static byte[] tagToByteArray(ItemStack stack) {
-        if(stack != null) {
-            NBTTagCompound tagCompound = stack.getTagCompound();
+        NBTTagCompound tagCompound = stack.getTagCompound();
 
-            if(tagCompound != null) {
-                try(ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-                    CompressedStreamTools.writeCompressed(tagCompound, out);
-                    return out.toByteArray();
-                } catch(IOException e) {
-                    throw new RuntimeException(e);
-                }
+        if(tagCompound != null) {
+            try(ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+                CompressedStreamTools.writeCompressed(tagCompound, out);
+                return out.toByteArray();
+            } catch(IOException e) {
+                throw new RuntimeException(e);
             }
         }
 
-        return new byte[0];
+        return null;
     }
 
 }
