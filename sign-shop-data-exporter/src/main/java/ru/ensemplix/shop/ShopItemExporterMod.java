@@ -7,12 +7,14 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
-import org.apache.logging.log4j.Logger;
+import net.minecraft.nbt.NBTTagCompound;
 import ru.ensemplix.shop.exporter.JsonShopItemExporter;
 import ru.ensemplix.shop.exporter.ShopItemExporter;
 import ru.ensemplix.shop.list.CreativeTabItemList;
 import ru.ensemplix.shop.list.ItemList;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -20,23 +22,41 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 
 @Mod(modid = "signshopdataexporter", name = "ShopDataExporter", version = "1.0", acceptedMinecraftVersions = "[1.7.10]", acceptableRemoteVersions = "*")
 public class ShopItemExporterMod {
+    // Фильтр, по которому мы убираем предметов с одинаковыми именами и свойствами.
+    static final Predicate<ItemStack> FILTER_SAME_ITEMSTACKS = new Predicate<ItemStack>() {
+        private final List<ItemStack> seen = new ArrayList<>();
 
-    private Logger logger;
+        @Override
+        public boolean test(ItemStack stack) {
+            for(ItemStack other : seen) {
+                if(ItemStack.areItemStacksEqual(stack, other)) {
+                    return false;
+                }
+            }
+
+            seen.add(stack);
+            return true;
+        }
+    };
+
+    private ShopItemExporterLogger logger;
     private Path folder;
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         folder = event.getModConfigurationDirectory().toPath().resolve("export_data");
-        logger = event.getModLog();
+        logger = new ShopItemExporterLogger(event.getModLog());
 
         try {
             Files.createDirectories(folder);
-        } catch (IOException e) {
-            logger.warn("Failed create export data folder");
+        } catch(IOException e) {
+            logger.warn("Failed create export data folder", e);
         }
     }
 
@@ -46,9 +66,12 @@ public class ShopItemExporterMod {
 
         try {
             exportItems();
-        } catch(Exception e) {
-            logger.warn("Failed to export items", e);
+        } catch(Throwable t) {
+            logger.warn("Failed to export items", t);
         }
+
+        // Сохраняем лог экспорта в файл.
+        logger.saveToFile(new File(folder.toFile(), "export-log.txt"));
     }
 
     private void exportItems() throws IOException {
@@ -59,7 +82,11 @@ public class ShopItemExporterMod {
 
         // Получаем список всех игровых предметов.
         ItemList itemList = new CreativeTabItemList();
-        List<ItemStack> items = itemList.getItems();
+        List<ItemStack> items = itemList.getItems().stream()
+                .filter(FILTER_SAME_ITEMSTACKS)
+                .collect(Collectors.toList());
+
+        logger.info("Found " + items.size() + " items");
 
         for(ItemStack item : items) {
             String displayName = item.getDisplayName();
@@ -86,11 +113,7 @@ public class ShopItemExporterMod {
             String id = Item.itemRegistry.getNameForObject(item.getItem());
             String modId = id.split(":")[0].replaceAll("[^a-zA-Zа-яА-Я0-9]", "");
             int data = item.getMetadata();
-            byte[] state = null;
-
-            if(item.hasTagCompound()) {
-                state = CompressedStreamTools.compress(item.getTagCompound());
-            }
+            byte[] state = tagToByteArray(item);
 
             ShopItem shopItem = new ShopItem(name, new ShopItemStack(id, data, state));
             List<ShopItem> shopItems = itemsByModId.computeIfAbsent(modId, k -> new ArrayList<>());
@@ -106,6 +129,21 @@ public class ShopItemExporterMod {
         }
 
         logger.info("Successfully finished with " + names.size() + " items");
+    }
+
+    private static byte[] tagToByteArray(ItemStack stack) {
+        NBTTagCompound tagCompound = stack.getTagCompound();
+
+        if(tagCompound != null) {
+            try(ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+                CompressedStreamTools.writeCompressed(tagCompound, out);
+                return out.toByteArray();
+            } catch(IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return null;
     }
 
 }
