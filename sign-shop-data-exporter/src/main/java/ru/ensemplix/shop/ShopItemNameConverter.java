@@ -15,7 +15,7 @@ public class ShopItemNameConverter {
     private static final Pattern CONSONANT_PATTERN = Pattern.compile("[^aeiouyаеёиоуыэюя]");
 
     // Максимальное количество символов на одной строке таблички.
-    private static final int MAX_SIGN_LINE_TEXT_WIDTH = 16;
+    private static final int MAX_SIGN_LINE_TEXT_WIDTH = 15;
 
     /**
      * Конвертирует имя предмета для использования на табличке.
