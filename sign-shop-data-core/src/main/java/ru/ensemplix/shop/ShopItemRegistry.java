@@ -61,4 +61,25 @@ public class ShopItemRegistry {
         return itemsByName.get(name);
     }
 
+    /**
+     * Возвращает товар по предмету.
+     * @param stack Предмет, по которому ищем товар.
+     * @return Товар, который получили по предмету.
+     */
+    public ShopItem getItemByStack(ShopItemStack stack) {
+        List<ShopItem> items = getItemsById(stack.getId());
+
+        if(items == null) {
+            return null;
+        }
+
+        for(ShopItem possibleItem : items) {
+            if(possibleItem.getMatcher().match(stack)) {
+                return possibleItem;
+            }
+        }
+
+        return null;
+    }
+
 }
