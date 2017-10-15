@@ -24,7 +24,7 @@ public class ShopItemNameConverterTest {
 
     @Test
     public void testConvertCentrifuge() {
-        assertEquals("ТЕРМАЛЬН_ЦЕНТРИФ", convert("Термальная центрифуга"));
+        assertEquals("ТЕРМАЛЬН_ЦЕНТР", convert("Термальная центрифуга"));
     }
 
     @Test
@@ -39,7 +39,7 @@ public class ShopItemNameConverterTest {
 
     @Test
     public void testConvertYellowFiredClay() {
-        assertEquals("ЖЁЛТ_ОБОЖЖ_ГЛИНА", convert("Жёлтая обожжённая глина"));
+        assertEquals("ЖЁЛТ_ОБОЖ_ГЛИНА", convert("Жёлтая обожжённая глина"));
     }
 
 }
