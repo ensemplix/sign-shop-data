@@ -111,6 +111,12 @@ public class ShopItemExporterMod {
             }
 
             String id = Item.itemRegistry.getNameForObject(item.getItem());
+
+            if(id == null) {
+                logger.info("Item " + displayName + " does not have name");
+                continue;
+            }
+
             String modId = id.split(":")[0].replaceAll("[^a-zA-Zа-яА-Я0-9]", "");
             int data = item.getMetadata();
             byte[] state = tagToByteArray(item);
