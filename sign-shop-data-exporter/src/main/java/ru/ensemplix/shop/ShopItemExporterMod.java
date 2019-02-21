@@ -1,13 +1,14 @@
 package ru.ensemplix.shop;
 
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.RegistryNamespaced;
+import org.apache.logging.log4j.LogManager;
+import org.dimdev.rift.listener.BootstrapListener;
+import org.dimdev.riftloader.RiftLoader;
+import org.dimdev.riftloader.listener.InitializationListener;
 import ru.ensemplix.shop.exporter.JsonShopItemExporter;
 import ru.ensemplix.shop.exporter.ShopItemExporter;
 import ru.ensemplix.shop.list.CreativeTabItemList;
@@ -25,10 +26,10 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-@Mod(modid = "signshopdataexporter", name = "ShopDataExporter", version = "1.1", acceptedMinecraftVersions = "[1.12]", acceptableRemoteVersions = "*")
-public class ShopItemExporterMod {
+public class ShopItemExporterMod implements BootstrapListener {
+
     // Фильтр, по которому мы убираем предметов с одинаковыми именами и свойствами.
-    static final Predicate<ItemStack> FILTER_SAME_ITEMSTACKS = new Predicate<ItemStack>() {
+    static final Predicate<ItemStack> FILTER_SAME_ITEM_STACKS = new Predicate<ItemStack>() {
         private final List<ItemStack> seen = new ArrayList<>();
 
         @Override
@@ -44,27 +45,24 @@ public class ShopItemExporterMod {
         }
     };
 
-    private ShopItemExporterLogger logger;
-    private Path folder;
 
-    @Mod.EventHandler
-    public void preInit(FMLPreInitializationEvent event) {
-        folder = event.getModConfigurationDirectory().toPath().resolve("export_data");
-        logger = new ShopItemExporterLogger(event.getModLog());
+    @Override
+    public void afterVanillaBootstrap() {
+        ShopItemExporterLogger logger = new ShopItemExporterLogger(LogManager.getLogger());
+        Path folder = RiftLoader.instance.configDir.toPath().resolve("exporter");
+        ItemList itemList = new CreativeTabItemList();
+        ShopItemExporter exporter = new JsonShopItemExporter();
 
         try {
             Files.createDirectories(folder);
         } catch(IOException e) {
-            logger.warn("Failed create export data folder", e);
+            throw new RuntimeException(e);
         }
-    }
 
-    @EventHandler
-    public void loadComplete(FMLLoadCompleteEvent event) {
         logger.info("Exporting items");
 
         try {
-            exportItems();
+            exportItems(logger, exporter, itemList, folder);
         } catch(Throwable t) {
             logger.warn("Failed to export items", t);
         }
@@ -73,22 +71,21 @@ public class ShopItemExporterMod {
         logger.saveToFile(new File(folder.toFile(), "export-log.txt"));
     }
 
-    private void exportItems() throws IOException {
+    private void exportItems(ShopItemExporterLogger logger, ShopItemExporter exporter, ItemList itemList, Path folder) {
         // Список всех предметов по модам.
         Map<String, List<ShopItem>> itemsByModId = new HashMap<>();
         // Все имена которые были.
         List<String> names = new ArrayList<>();
 
         // Получаем список всех игровых предметов.
-        ItemList itemList = new CreativeTabItemList();
         List<ItemStack> items = itemList.getItems().stream()
-                .filter(FILTER_SAME_ITEMSTACKS)
+                .filter(FILTER_SAME_ITEM_STACKS)
                 .collect(Collectors.toList());
 
         logger.info("Found " + items.size() + " items");
 
         for(ItemStack item : items) {
-            String displayName = item.getDisplayName();
+            String displayName = item.getDisplayName().getString();
 
             // Предмет не имеет перевода.
             if(displayName.contains(".")) {
@@ -109,9 +106,16 @@ public class ShopItemExporterMod {
                 logger.info("Item " + name + " (" + displayName + ") already exists");
             }
 
-            String id = Item.REGISTRY.getNameForObject(item.getItem()).toString();
-            String modId = id.split(":")[0].replaceAll("[^a-zA-Zа-яА-Я0-9]", "");
-            int data = item.getMetadata();
+            ResourceLocation resource = RegistryNamespaced.ITEM.getKey(item.getItem());
+
+            if(resource == null) {
+                logger.info("Item " + displayName + " resource not found");
+                continue;
+            }
+
+            String id = resource.toString();
+            String modId = resource.getNamespace();
+            int data = item.getDamage();
             byte[] state = tagToByteArray(item);
 
             ShopItem shopItem = new ShopItem(name, new ShopItemStack(id, data, state));
@@ -119,9 +123,6 @@ public class ShopItemExporterMod {
             shopItems.add(shopItem);
             names.add(name);
         }
-
-        // Экспортируем предметы в файлы.
-        ShopItemExporter exporter = new JsonShopItemExporter();
 
         for(String modId : itemsByModId.keySet()) {
             exporter.exportToFile(itemsByModId.get(modId), folder.resolve(modId + ".json"));
@@ -131,7 +132,7 @@ public class ShopItemExporterMod {
     }
 
     private static byte[] tagToByteArray(ItemStack stack) {
-        NBTTagCompound tagCompound = stack.getTagCompound();
+        NBTTagCompound tagCompound = stack.getTag();
 
         if(tagCompound != null) {
             try(ByteArrayOutputStream out = new ByteArrayOutputStream()) {

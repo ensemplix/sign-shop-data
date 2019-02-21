@@ -16,7 +16,8 @@ import java.util.List;
  * Специальный логер для сохранения результатов экспорта в отдельный файл.
  */
 public class ShopItemExporterLogger {
-    private static final DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+
+    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("HH:mm:ss");
     private final List<String> exportLog = new ArrayList<>();
     private final Logger logger;
 
@@ -25,13 +26,13 @@ public class ShopItemExporterLogger {
     }
 
     void info(String message) {
-        String currentTime = dateFormat.format(new Date());
+        String currentTime = DATE_FORMAT.format(new Date());
         exportLog.add("["+ currentTime + "][INFO] " + message);
         logger.info(message);
     }
 
     void warn(String message, Throwable t) {
-        String currentTime = dateFormat.format(new Date());
+        String currentTime = DATE_FORMAT.format(new Date());
         exportLog.add("["+ currentTime + "][WARN] " + message);
         exportLog.add(Throwables.getStackTraceAsString(t));
         logger.warn(message, t);

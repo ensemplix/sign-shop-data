@@ -1,6 +1,6 @@
 package ru.ensemplix.shop.list;
 
-import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 
@@ -15,12 +15,12 @@ public class CreativeTabItemList implements ItemList {
     public List<ItemStack> getItems() {
         NonNullList<ItemStack> items = NonNullList.create();
 
-        for(CreativeTabs creativeTab : CreativeTabs.CREATIVE_TAB_ARRAY) {
-            if(creativeTab == CreativeTabs.HOTBAR) {
+        for(ItemGroup group : ItemGroup.GROUPS) {
+            if(group == ItemGroup.HOTBAR) {
                 continue;
             }
 
-            creativeTab.displayAllRelevantItems(items);
+            group.fill(items);
         }
 
         return items;

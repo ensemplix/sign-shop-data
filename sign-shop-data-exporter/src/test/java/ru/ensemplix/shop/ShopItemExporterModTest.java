@@ -1,7 +1,7 @@
 package ru.ensemplix.shop;
 
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Bootstrap;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import org.junit.Before;
@@ -23,12 +23,12 @@ public class ShopItemExporterModTest {
     @Test
     public void testFilterSameItemStacks() {
         NonNullList<ItemStack> beforeItems = NonNullList.create();
-        CreativeTabs.BREWING.displayAllRelevantItems(beforeItems);
+        ItemGroup.BREWING.fill(beforeItems);
         beforeItems.add(new ItemStack(STONE_AXE));
         beforeItems.add(new ItemStack(STONE_AXE));
 
         List<ItemStack> afterItems = beforeItems.stream()
-                .filter(ShopItemExporterMod.FILTER_SAME_ITEMSTACKS)
+                .filter(ShopItemExporterMod.FILTER_SAME_ITEM_STACKS)
                 .collect(Collectors.toList());
 
         assertEquals(beforeItems.size() - 1, afterItems.size());

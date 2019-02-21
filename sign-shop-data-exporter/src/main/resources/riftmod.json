@@ -1,0 +1,8 @@
+{
+  "id": "sign-shop-data-exporter",
+  "name": "ShopDataExporter",
+  "authors": [ "Ensemplix" ],
+  "listeners": [
+    "ru.ensemplix.shop.ShopItemExporterMod"
+  ]
+}
